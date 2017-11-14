@@ -78,6 +78,27 @@ namespace Microsoft.AspNet.SignalR.Json
             else
             {
                 serializer.Serialize(writer, value);
+                //JsonSerializer X = new JsonSerializer();
+                //X.Serialize(writer, value);
+
+
+                //JsonSerializer X = new JsonSerializer();
+                ////serializer.Converters.Add(new JavaScriptDateTimeConverter());
+                ////X.NullValueHandling = NullValueHandling.Ignore;
+
+                //StringBuilder sb = new StringBuilder();
+                //StringWriter sw = new StringWriter(sb);
+                
+                //using (JsonWriter W = new JsonTextWriter(sw))
+                //{
+                //    X.Serialize(W, value);
+                //    // {"ExpiryDate":new Date(1230375600000),"Price":0}
+
+                //}
+
+
+
+
             }
         }
 

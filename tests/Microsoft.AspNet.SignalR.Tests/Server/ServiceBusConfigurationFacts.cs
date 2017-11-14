@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Extensions;
 
@@ -24,10 +25,10 @@ namespace Microsoft.AspNet.SignalR.Tests.Server
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
-        public void ValidateTopicCount(int topicCount)
+        public async Task ValidateTopicCount(int topicCount)
         {
             var config = new ServiceBusScaleoutConfiguration("cs", "topic");
-            Assert.Throws<ArgumentOutOfRangeException>(() => config.TopicCount = topicCount);
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => config.TopicCount = topicCount);
         }
 
         [Fact]

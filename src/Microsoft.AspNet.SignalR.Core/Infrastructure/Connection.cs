@@ -231,6 +231,10 @@ namespace Microsoft.AspNet.SignalR.Infrastructure
 
                 Buffer.BlockCopy(data.Array, data.Offset, buffer, 0, data.Count);
 
+                var rendereddata = Encoding.UTF8.GetString(buffer, 0, data.Count);
+
+                Debug.Assert(! "{}".Equals(rendereddata));
+
                 return new ArraySegment<byte>(buffer);
             }
         }

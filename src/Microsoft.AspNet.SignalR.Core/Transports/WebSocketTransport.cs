@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -164,8 +165,69 @@ namespace Microsoft.AspNet.SignalR.Transports
             {
                 try
                 {
+                    //()state).State).Messages).Items[0]).Array[55].Value.Array
+
+                    //(new System.Collections.Generic.Mscorlib_CollectionDebugView<System.ArraySegment<Microsoft.AspNet.SignalR.Messaging.Message>>
+
+                    string rendereddataX = string.Empty;
+                    string rendereddata = string.Empty;
+
+                    try
+                    {
+                        //var s =
+                        //    (Microsoft.AspNet.SignalR.Transports.PersistentResponse) ((Microsoft.AspNet.SignalR.
+                        //        Transports.
+                        //        WebSocketTransport.WebSocketTransportContext) state).State;
+
+                        var s = context.State as Microsoft.AspNet.SignalR.Transports.PersistentResponse;
+                        if (!s.Messages[0].Array[0].IsCommand)
+                        {
+                            var dataX = s.Messages[0].Array[0].Value;
+
+                            var bufferX = new byte[dataX.Count];
+                            Buffer.BlockCopy(dataX.Array, dataX.Offset, bufferX, 0, dataX.Count);
+                            rendereddataX = Encoding.UTF8.GetString(bufferX, 0, dataX.Count);
+                            //Debug.Assert(!"{}".Equals(rendereddataX));
+                            Debug.WriteLine(rendereddataX);
+                        }
+                    }
+                    finally
+                    {
+                    }
+
+
+
                     context.Transport.JsonSerializer.Serialize(context.State, writer);
                     writer.Flush();
+
+
+                    var data = writer.Buffer;
+                    var buffer = new byte[data.Count];
+                    Buffer.BlockCopy(data.Array, data.Offset, buffer, 0, data.Count);
+                    rendereddata = Encoding.UTF8.GetString(buffer, 0, data.Count);
+                    //Debug.Assert(!"{}".Equals(rendereddata));
+                    if (!string.IsNullOrEmpty(rendereddataX))
+                    {
+                        //Debug.Assert(rendereddataX.Equals(rendereddata));
+
+                        JsonSerializer X = new JsonSerializer();
+                        ////serializer.Converters.Add(new JavaScriptDateTimeConverter());
+                        ////X.NullValueHandling = NullValueHandling.Ignore;
+
+                        StringBuilder sb = new StringBuilder();
+                        StringWriter sw = new StringWriter(sb);
+
+                        using (JsonWriter W = new JsonTextWriter(sw))
+                        {
+                            X.Serialize(W, context.State);
+                            // {"ExpiryDate":new Date(1230375600000),"Price":0}
+
+                        }
+                        Debug.Assert(rendereddata.Equals(sb.ToString()));
+                    }
+
+
+
 
                     await socket.Send(writer.Buffer).PreserveCulture();
 
